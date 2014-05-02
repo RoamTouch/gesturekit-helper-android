@@ -3,6 +3,7 @@ package com.gesturekit.gesturekithelper;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import android.view.animation.Interpolator;
 
 import com.roamtouch.gesturekit.GestureKit;
 import com.roamtouch.gesturekit.PluginInterface;
+import com.roamtouch.gesturekit.GestureKit.GestureKitListener;
 
 
 public class GestureKitHelper extends View implements PluginInterface {
@@ -77,8 +79,17 @@ public class GestureKitHelper extends View implements PluginInterface {
 	private GestureKit gestureKit;
 	private GestureDetector gestureDetector;
     
-	public GestureKitHelper(Context context) {
+	private GestureKit gesturekit;
+	
+	// Gesture Action
+	HelpAction gkhelpaction;
+	
+	private Activity activity;
+	
+	public GestureKitHelper(Context context, GestureKit gk) {
 		super(context);	
+		this.activity  = (Activity) context;
+		this.gesturekit = gk;		
 		init();
 	}
 
@@ -93,6 +104,17 @@ public class GestureKitHelper extends View implements PluginInterface {
 	}
 
 	private void init(){
+		
+		// Implement GestureAction Plugin 		
+		this.gesturekit.setGestureKitListener(new GestureKitListener() {
+   			@Override
+   			public void onGestureKitLoaded() {   				
+   				gkhelpaction = new HelpAction(activity, gesturekit);
+   				gesturekit.addGKAction(gkhelpaction);
+   			}
+   		});		 
+		
+		
 		linePaint = new Paint();
 		linePaint.setAntiAlias(true);
 		linePaint.setDither(true);
