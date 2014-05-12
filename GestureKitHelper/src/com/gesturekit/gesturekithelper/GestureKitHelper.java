@@ -28,6 +28,7 @@ import android.view.animation.Interpolator;
 import com.roamtouch.gesturekit.GestureKit;
 import com.roamtouch.gesturekit.PluginInterface;
 import com.roamtouch.gesturekit.GestureKit.GestureKitListener;
+import com.roamtouch.gesturekit.data.PluginParams;
 
 
 public class GestureKitHelper extends View implements PluginInterface {
@@ -53,7 +54,7 @@ public class GestureKitHelper extends View implements PluginInterface {
 	private static int BACKGROUND_OFFSET_FACTOR 		= 8;
 
 	private static final int color = 0xFF55555;
-	private final float SCALE_FACTOR = 8;
+	private final float SCALE_FACTOR = 5;
 	private int sideSize;
 	private PointF scale = new PointF();
 
@@ -81,8 +82,13 @@ public class GestureKitHelper extends View implements PluginInterface {
     
 	private GestureKit gesturekit;
 	
-	// Gesture Action
-	HelpAction gkhelpaction;
+	// GestureKit Plugin Params 
+	private PluginParams pluginparams = new PluginParams();
+	
+	// Gesture Actions
+	HelpPopUpAction gkhelpopuppaction;
+	HelpAnimationAction gkhelpanimationaction;
+	
 	
 	private Activity activity;
 	
@@ -105,15 +111,34 @@ public class GestureKitHelper extends View implements PluginInterface {
 
 	private void init(){
 		
-		// Implement GestureAction Plugin 		
-		this.gesturekit.setGestureKitListener(new GestureKitListener() {
-   			@Override
-   			public void onGestureKitLoaded() {   				
-   				gkhelpaction = new HelpAction(activity, gesturekit);
-   				gesturekit.addGKAction(gkhelpaction);
-   			}
-   		});		 
+		// Plugin Params Defintion
+		this.pluginparams.GESTUREKIT_ENABLE_GRID = false;
+		this.pluginparams.GESTUREKIT_HELPER_POPUP_MODE = true;
+		this.pluginparams.GESTUREKIT_HELPER_ANIMATION_MODE = false;
 		
+		if(this.pluginparams.GESTUREKIT_HELPER_POPUP_MODE){
+			
+			// Implement GestureAction Plugin for showing popup on help geture. 		
+			this.gesturekit.setGestureKitListener(new GestureKitListener() {
+	   			@Override
+	   			public void onGestureKitLoaded() {   				
+	   				gkhelpopuppaction = new HelpPopUpAction(activity, gesturekit);
+	   				gesturekit.addGKAction(gkhelpopuppaction);
+	   			}
+	   		});		
+			
+		} else if (this.pluginparams.GESTUREKIT_HELPER_ANIMATION_MODE){
+			
+			// Implement GestureAction Plugin for showing popup on help geture. 		
+			this.gesturekit.setGestureKitListener(new GestureKitListener() {
+	   			@Override
+	   			public void onGestureKitLoaded() {   				
+	   				gkhelpanimationaction = new HelpAnimationAction(activity, gesturekit);
+	   				gesturekit.addGKAction(gkhelpanimationaction);
+	   			}
+	   		});	
+			
+		}
 		
 		linePaint = new Paint();
 		linePaint.setAntiAlias(true);
@@ -480,5 +505,20 @@ public class GestureKitHelper extends View implements PluginInterface {
 				GestureKitHelper.this.gestureKit.executeMethod(HELP_METHOD);
 			return false;
 		 }
+	}
+
+	/*
+	 * PLUGIN PARAMETERS
+	 * @see com.roamtouch.gesturekit.PluginInterface#setPluginParams(com.roamtouch.gesturekit.data.PluginParams)
+	 */
+	
+	@Override
+	public void setPluginParams(PluginParams params) {
+		this.pluginparams = params;	
+	}
+
+	@Override
+	public PluginParams getPluginParams() {		
+		return pluginparams;
 	}
 }

@@ -18,7 +18,6 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.Shape;
 import android.os.Handler;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +35,7 @@ import android.widget.LinearLayout.LayoutParams;
 import com.roamtouch.gesturekit.GKActionInterface;
 import com.roamtouch.gesturekit.GestureKit;
 
-public class HelpPopUpAction implements GKActionInterface {
+public class HelpAnimationAction implements GKActionInterface {
 
 	private boolean initialized = false;
 
@@ -53,7 +52,7 @@ public class HelpPopUpAction implements GKActionInterface {
 	private Button closeHelpButton;
 	private GestureKit gk;
 	
-	public HelpPopUpAction(Context context, /*View view, int gridId, int closeButtonId,*/ GestureKit gk){
+	public HelpAnimationAction(Context context, /*View view, int gridId, int closeButtonId,*/ GestureKit gk){
 		
 		this.activity = (Activity) context;
 		this.gk = gk;
@@ -88,21 +87,10 @@ public class HelpPopUpAction implements GKActionInterface {
 	
 	public void loadHelp() throws JSONException{		
 		if(!initialized){
-			initSubviews();
+				initSubviews();
 		} else {
-			try {
-				
-				activity.runOnUiThread(new Runnable() {		 
-					@Override
-					public void run() { 
-						gesturesView.setVisibility(View.VISIBLE);		
-						gesturesView.getContext().sendBroadcast(new Intent(GestureKit.ACTION_VISOR).putExtra("visor_action", "hide_visor"));	
-					 }
-		        });	 							
-				
-			}  catch (Exception e){
-				   Log.v("", "" + e.toString());
-			 }
+			gesturesView.setVisibility(View.VISIBLE);		
+			gesturesView.getContext().sendBroadcast(new Intent(GestureKit.ACTION_VISOR).putExtra("visor_action", "hide_visor"));	
 		}
 	}
 	
@@ -113,10 +101,13 @@ public class HelpPopUpAction implements GKActionInterface {
 		gesturesView.setOrientation(LinearLayout.VERTICAL);
 		gesturesView.setWeightSum(1.1f);		
 		
-		gridView = new GridView(activity);	
-		int width = gk.getScreenWidth();
-		int height = gk.getScreenHeight();
 		
+		gridView = new GridView(activity);	
+					
+		@SuppressWarnings("deprecation")
+		int width = gk.getWindowsManager().getDefaultDisplay().getWidth();
+		@SuppressWarnings("deprecation")
+		int height = gk.getWindowsManager().getDefaultDisplay().getHeight();		
 		int orientation = width>height? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 		int cols = orientation==ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE ? 4 : 3;
 		int textNameSize = width<height? width / 50 : height / 50;
@@ -125,11 +116,7 @@ public class HelpPopUpAction implements GKActionInterface {
 		int colWidth = (int)(width/(float)cols) - gridPaddingX;
 		
 		//@SuppressWarnings("deprecation")
-		//LinearLayout.LayoutParams layout_params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT);
-		LinearLayout.LayoutParams layout_params = new LinearLayout.LayoutParams(new ViewGroup.LayoutParams(
-				LinearLayout.LayoutParams.FILL_PARENT,
-				LinearLayout.LayoutParams.FILL_PARENT));
-		
+		LinearLayout.LayoutParams layout_params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT);
 		layout_params.weight = 1;
 		
 		gridView.setLayoutParams(layout_params);
@@ -174,20 +161,10 @@ public class HelpPopUpAction implements GKActionInterface {
 			}
 		});
 		
+		
 		//gk.onPause();		
-		try {
-					
-			activity.runOnUiThread(new Runnable() {		 
-				@Override
-				public void run() { 
-					gesturesView.setBackgroundColor(Color.parseColor("#000000"));
-					gk.addView(gesturesView);
-				 }
-	        });	 			
-				
-		}  catch (Exception e){
-			   Log.v("", "" + e.toString());
-		 }
+		gk.getWindowsManager().addView(gesturesView, gk.getLayoutParams());	
+		gesturesView.setBackgroundColor(Color.parseColor("#000000"));
 		
 		initialized = true;
 	}
