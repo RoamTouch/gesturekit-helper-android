@@ -169,7 +169,7 @@ public class GestureKitHelper extends View implements PluginInterface {
 
 		this.rect = new RectF();
 		this.rect.left = offset;
-		this.rect.top = offset;
+		this.rect.top = offset + 100;
 		this.rect.right = this.rect.left + sideSize;
 		this.rect.bottom = this.rect.top + sideSize;	
 
