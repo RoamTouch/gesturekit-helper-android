@@ -35,7 +35,10 @@ this.gesturekit.setPlugin((PluginInterface) new GestureKitHelper(this, this.gest
 <img src="http://www.roamtouch.com/wp-content/uploads/2014/06/logo.png" width="200" alt="RoamTouch logo">
 
 [RoamTouch](http://roamtouch.com)
-[GestureKit](http://gesturekit.com)
+
+<img src="http://www.roamtouch.com/wp-content/uploads/2014/06/logo.png" width="200" alt="RoamTouch logo">
+
+[GestureKit](http://www.gesturekit.com/images/logo.svg)
 
 ## License
 Licensed under Apache v2 License.
